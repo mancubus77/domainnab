@@ -1,0 +1,14 @@
+certifi==2020.12.5
+chardet==4.0.0
+idna==2.10
+pyaes==1.6.1
+pyasn1==0.4.8
+PyJWT==2.0.1
+python-arango==7.1.0
+requests==2.25.1
+requests-toolbelt==0.9.1
+rsa==4.7.2
+setuptools-scm==6.0.1
+Telethon==1.21.1
+toml==0.10.2
+urllib3==1.26.4
