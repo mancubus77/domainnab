@@ -29,6 +29,9 @@ def fetch(page):
     total_pages = divmod(int(response.headers.get("x-total-count")), MAX_PER_PAGE)[0]
     if (total_pages > 0) and (total_pages != page - 1):
         fetch(page=page + 1)
+    print(
+        f"X-Quota-PerDay-Remaining: {response.headers.get('X-Quota-PerDay-Remaining')}"
+    )
 
 
 def update_collection():
