@@ -1,5 +1,6 @@
 import requests
 import os
+from datetime import datetime
 from arango_client import Arango
 from req_body import request_body
 from arango.exceptions import DocumentInsertError
@@ -51,6 +52,7 @@ def update_collection():
 
 
 if __name__ == "__main__":
+    print(f"Starting {str(datetime.now())}")
     session = requests.Session()
     session.headers.update(HEADERS)
     request_body["pageSize"] = MAX_PER_PAGE
