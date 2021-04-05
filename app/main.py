@@ -1,5 +1,6 @@
 import requests
 import os
+import time
 from datetime import datetime
 from arango_client import Arango
 from req_body import request_body
@@ -42,16 +43,17 @@ def update_collection():
     for entry in data:
         if entry["type"] == "PropertyListing":
             entry = entry["listing"]
-            entry.update({"_key": str(entry["id"])})
+            entry.update({"_key": str(entry["id"]), "ts": int(time.time())})
             try:
                 arango.collection.insert(entry)
             except DocumentInsertError:
                 continue
             if not os.getenv("DISABLE_TELEGRAM"):
-                telega.client.send_message(
-                    os.getenv("RECEIVER"),
-                    "https://www.domain.com.au/" + entry["listingSlug"],
+                message = format(
+                    f'Price: {entry["priceDetails"]["displayPrice"]}'
+                    f'https://www.domain.com.au/{entry["listingSlug"]}'
                 )
+                telega.client.send_message(os.getenv("RECEIVER"), message)
 
 
 if __name__ == "__main__":
