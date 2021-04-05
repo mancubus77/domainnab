@@ -40,6 +40,5 @@ class Arango:
         try:
             self.collection.insert(entry)
             return True
-        # except DocumentInsertError:
-        except Exception as e:
+        except DocumentInsertError:
             return False
