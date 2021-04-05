@@ -35,25 +35,25 @@ def fetch(page):
     )
 
 
-def update_collection():
+def update_collection(entry):
     """
     Push data to Arango
+    @param entry: Json document
     @return: None
     """
-    for entry in data:
-        if entry["type"] == "PropertyListing":
-            entry = entry["listing"]
-            entry.update({"_key": str(entry["id"]), "ts": int(time.time())})
-            try:
-                arango.collection.insert(entry)
-            except DocumentInsertError:
-                continue
-            if not os.getenv("DISABLE_TELEGRAM"):
-                message = format(
-                    f'{entry["priceDetails"]["displayPrice"]}\n'
-                    f'https://www.domain.com.au/{entry["listingSlug"]}'
-                )
-                telega.send_telegram_message(os.getenv("RECEIVER"), message)
+    if entry["type"] == "PropertyListing":
+        entry = entry["listing"]
+        entry.update({"_key": str(entry["id"]), "ts": int(time.time())})
+        try:
+            arango.collection.insert(entry)
+        except DocumentInsertError:
+            return
+        if not os.getenv("DISABLE_TELEGRAM"):
+            message = format(
+                f'{entry["priceDetails"]["displayPrice"]}\n'
+                f'https://www.domain.com.au/{entry["listingSlug"]}'
+            )
+            telega.send_telegram_message(os.getenv("RECEIVER"), message)
 
 
 if __name__ == "__main__":
@@ -71,4 +71,5 @@ if __name__ == "__main__":
             }
         ]
     fetch(page=1)
-    update_collection()
+    for el in data:
+        update_collection(el)
