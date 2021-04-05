@@ -27,7 +27,7 @@ class Psql:
             "listings",
             meta,
             Column("data", JSON),
-            Column("ts", Date, default=datetime.datetime.now()),
+            Column("ts", Date),
         )
         with self.db.connect() as self.conn:
             try:
