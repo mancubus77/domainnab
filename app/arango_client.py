@@ -1,5 +1,7 @@
 import os
+import time
 from arango import ArangoClient
+from arango.exceptions import DocumentInsertError
 
 
 class Arango:
@@ -31,3 +33,16 @@ class Arango:
         """
         self.__client.close()
         print("Closing DB Collection")
+
+    def insert_arango(self, entry):
+        if entry["type"] == "PropertyListing":
+            entry = entry["listing"]
+            entry.update({"_key": str(entry["id"]), "ts": int(time.time())})
+            try:
+                self.collection.insert(entry)
+            except DocumentInsertError:
+                return
+            return format(
+                f'Price: {entry["priceDetails"]["displayPrice"]}'
+                f'https://www.domain.com.au/{entry["listingSlug"]}'
+            )
