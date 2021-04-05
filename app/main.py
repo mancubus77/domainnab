@@ -52,7 +52,23 @@ if __name__ == "__main__":
         ]
     fetch(page=1)
     for entry in data:
-        message = arango.insert_arango(entry)
-        if not os.getenv("DISABLE_TELEGRAM") and message:
-            telega.client.send_message(os.getenv("RECEIVER"), message)
-        # arango.insert_arango(entry)
+        if entry["type"] == "PropertyListing":
+            entry = entry["listing"]
+            # arango.insert_arango(
+            #     (lambda x: x.update({"ts": int(time.time()), "_key": x["id"]}) or x)(
+            #         entry
+            #     )
+            # )
+            mongo.insert_document(
+                (lambda x: x.update({"ts": int(time.time()), "_id": x["id"]}) or x)(
+                    entry
+                )
+            )
+            if not os.getenv("DISABLE_TELEGRAM"):
+                telega.send_telegram_message(
+                    os.getenv("RECEIVER"),
+                    format(
+                        f'{entry["priceDetails"]["displayPrice"]}\n'
+                        f'https://www.domain.com.au/{entry["listingSlug"]}'
+                    ),
+                )

@@ -4,6 +4,7 @@ idna==2.10
 pyaes==1.6.1
 pyasn1==0.4.8
 PyJWT==2.0.1
+pymongo==3.11.3
 python-arango==7.1.0
 requests==2.25.1
 requests-toolbelt==0.9.1
