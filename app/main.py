@@ -15,7 +15,7 @@ data = []
 
 telega = Telegram()
 arango = Arango()
-mongo = Mongo()
+# mongo = Mongo()
 psql = Psql()
 
 
@@ -56,21 +56,21 @@ if __name__ == "__main__":
     for entry in data:
         if entry["type"] == "PropertyListing":
             entry = entry["listing"]
-            # Arango
-            # arango.insert_document(
-            #     (lambda x: x.update({"ts": int(time.time()), "_key": x["id"]}) or x)(
-            #         entry
-            #     )
-            # )
             # Mongo
             # mongo.insert_document(
             #     (lambda x: x.update({"ts": int(time.time()), "_id": x["id"]}) or x)(
             #         entry
             #     )
             # )
+            # Arango
+            is_new = arango.insert_document(
+                (lambda x: x.update({"ts": int(time.time()), "_key": str(x["id"])}) or x)(
+                    entry
+                )
+            )
             # PSQL
             psql.insert_document(entry)
-            if not os.getenv("DISABLE_TELEGRAM"):
+            if not os.getenv("DISABLE_TELEGRAM") and is_new:
                 telega.send_telegram_message(
                     os.getenv("RECEIVER"),
                     format(

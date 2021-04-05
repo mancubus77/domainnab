@@ -34,8 +34,12 @@ class Arango:
         self.__client.close()
         print("Closing DB Collection")
 
-    def insert_document(self, entry):
+    def insert_document(self, entry: dict) -> bool:
+        if '_id' in entry.keys():
+            entry.pop("_id")
         try:
             self.collection.insert(entry)
-        except DocumentInsertError:
-            return
+            return True
+        # except DocumentInsertError:
+        except Exception as e:
+            return False

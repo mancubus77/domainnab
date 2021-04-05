@@ -24,10 +24,7 @@ class Psql:
         # Table
         meta = MetaData(self.db)
         self.listings_table = Table(
-            "listings",
-            meta,
-            Column("data", JSON),
-            Column("ts", Date),
+            "listings", meta, Column("data", JSON), Column("ts", Date),
         )
         with self.db.connect() as self.conn:
             try:
@@ -39,7 +36,7 @@ class Psql:
             except ProgrammingError:
                 print(f"Table {table} exists")
 
-    def insert_document(self, document) -> None:
+    def insert_document(self, document) -> bool:
         """
         Insert document into database
         @param document: document
@@ -49,8 +46,9 @@ class Psql:
             statement = self.listings_table.insert().values(data=document)
             try:
                 self.conn.execute(statement)
+                return True
             except IntegrityError:
-                pass
+                return False
 
 
 if __name__ == "__main__":
