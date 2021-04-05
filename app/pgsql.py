@@ -19,7 +19,7 @@ class Psql:
             except ProgrammingError:
                 print(f"Database {database} Exists")
 
-        db_string = "postgresql://postgres:root@127.0.0.1:5432/{}".format(database)
+        db_string = f"postgresql://{os.getenv('PSQL_USERNAME')}:{os.getenv('PSQL_PASSWORD')}@{os.getenv('PSQL_HOST')}/{database}"
         self.db = create_engine(db_string, isolation_level="AUTOCOMMIT")
         # Table
         meta = MetaData(self.db)
