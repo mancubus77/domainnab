@@ -50,10 +50,10 @@ def update_collection():
                 continue
             if not os.getenv("DISABLE_TELEGRAM"):
                 message = format(
-                    f'Price: {entry["priceDetails"]["displayPrice"]}'
+                    f'{entry["priceDetails"]["displayPrice"]}\n'
                     f'https://www.domain.com.au/{entry["listingSlug"]}'
                 )
-                telega.client.send_message(os.getenv("RECEIVER"), message)
+                telega.send_telegram_message(os.getenv("RECEIVER"), message)
 
 
 if __name__ == "__main__":
