@@ -34,7 +34,7 @@ class Arango:
         self.__client.close()
         print("Closing DB Collection")
 
-    def insert_arango(self, entry):
+    def insert_document(self, entry):
         try:
             self.collection.insert(entry)
         except DocumentInsertError:

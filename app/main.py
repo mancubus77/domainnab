@@ -7,6 +7,7 @@ from req_body import request_body
 from suburbs import suburbs
 from telegram_client import Telegram
 from mongo_client import Mongo
+from pgsql import Psql
 
 HEADERS = {"X-Api-Key": os.getenv("DOMAIN_API_KEY")}
 MAX_PER_PAGE = 200
@@ -15,6 +16,7 @@ data = []
 telega = Telegram()
 arango = Arango()
 mongo = Mongo()
+psql = Psql()
 
 
 def fetch(page):
@@ -54,16 +56,20 @@ if __name__ == "__main__":
     for entry in data:
         if entry["type"] == "PropertyListing":
             entry = entry["listing"]
-            # arango.insert_arango(
+            # Arango
+            # arango.insert_document(
             #     (lambda x: x.update({"ts": int(time.time()), "_key": x["id"]}) or x)(
             #         entry
             #     )
             # )
-            mongo.insert_document(
-                (lambda x: x.update({"ts": int(time.time()), "_id": x["id"]}) or x)(
-                    entry
-                )
-            )
+            # Mongo
+            # mongo.insert_document(
+            #     (lambda x: x.update({"ts": int(time.time()), "_id": x["id"]}) or x)(
+            #         entry
+            #     )
+            # )
+            # PSQL
+            psql.insert_document(entry)
             if not os.getenv("DISABLE_TELEGRAM"):
                 telega.send_telegram_message(
                     os.getenv("RECEIVER"),
