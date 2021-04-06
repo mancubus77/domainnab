@@ -24,7 +24,7 @@ class Psql:
         # Table
         meta = MetaData(self.db)
         self.listings_table = Table(
-            "listings", meta, Column("data", JSON), Column("ts", Date),
+            "listings", meta, Column("data", JSON), Column("ts", Date, default=datetime.datetime.now()),
         )
         with self.db.connect() as self.conn:
             try:
