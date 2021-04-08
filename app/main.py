@@ -6,9 +6,14 @@ from arango_client import Arango
 from req_body import request_body
 from suburbs import suburbs
 from telegram_client import Telegram
+import logging
+import sys
 from mongo_client import Mongo
 from pgsql import Psql
 
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.info("Starting app...")
 HEADERS = {"X-Api-Key": os.getenv("DOMAIN_API_KEY")}
 MAX_PER_PAGE = 200
 data = []
@@ -33,13 +38,13 @@ def fetch(page):
     total_pages = divmod(int(response.headers.get("x-total-count")), MAX_PER_PAGE)[0]
     if (total_pages > 0) and (total_pages != page - 1):
         fetch(page=page + 1)
-    print(
+    logger.info(
         f"X-Quota-PerDay-Remaining: {response.headers.get('X-Quota-PerDay-Remaining')}"
     )
 
 
 if __name__ == "__main__":
-    print(f"Starting {str(datetime.now())}")
+    logger.info(f"Starting {str(datetime.now())}")
     session = requests.Session()
     session.headers.update(HEADERS)
     request_body["pageSize"] = MAX_PER_PAGE

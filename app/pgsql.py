@@ -3,21 +3,25 @@ import os
 from sqlalchemy import __version__ as pgsql_version
 from sqlalchemy import create_engine, Table, Column, MetaData, JSON, Date
 from sqlalchemy.exc import ProgrammingError, IntegrityError
+import logging
+
+logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class Psql:
     def __init__(self, database="domain", table="listings"):
-        print(f"sqlalchemy version: {pgsql_version}")
+        logger.info(f"sqlalchemy version: {pgsql_version}")
         db_string = f"postgresql://{os.getenv('PSQL_USERNAME')}:{os.getenv('PSQL_PASSWORD')}@{os.getenv('PSQL_HOST')}/"
         db = create_engine(db_string, isolation_level="AUTOCOMMIT")
 
         with db.connect() as conn:
-            print(f"Creating database {database}")
+            logger.info(f"Creating database {database}")
             try:
                 conn.execute("CREATE DATABASE {}".format(database))
-                print(f"Database {database} has been created")
+                logger.info(f"Database {database} has been created")
             except ProgrammingError:
-                print(f"Database {database} Exists")
+                logger.info(f"Database {database} Exists")
 
         db_string = f"postgresql://{os.getenv('PSQL_USERNAME')}:{os.getenv('PSQL_PASSWORD')}@{os.getenv('PSQL_HOST')}/{database}"
         self.db = create_engine(db_string, isolation_level="AUTOCOMMIT")
@@ -29,12 +33,12 @@ class Psql:
         with self.db.connect() as self.conn:
             try:
                 self.listings_table.create()
-                print(f"Table {table} has been created")
+                logger.info(f"Table {table} has been created")
                 self.conn.execute(
                     "CREATE UNIQUE INDEX ui_products_id ON listings((data->>'id'))"
                 )
             except ProgrammingError:
-                print(f"Table {table} exists")
+                logger.info(f"Table {table} exists")
 
     def insert_document(self, document) -> bool:
         """
