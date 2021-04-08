@@ -24,6 +24,7 @@ class Telegram:
         @return: None
         """
         with self.client:
+            self.client.parse_mode = "md"
             self.client.loop.run_until_complete(
                 self.client.send_message(receiver, message)
             )

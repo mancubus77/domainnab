@@ -16,7 +16,7 @@ data = []
 telega = Telegram()
 arango = Arango()
 # mongo = Mongo()
-psql = Psql()
+# psql = Psql()
 
 
 def fetch(page):
@@ -64,17 +64,18 @@ if __name__ == "__main__":
             # )
             # Arango
             is_new = arango.insert_document(
-                (lambda x: x.update({"ts": int(time.time()), "_key": str(x["id"])}) or x)(
-                    entry
-                )
+                (
+                    lambda x: x.update({"ts": int(time.time()), "_key": str(x["id"])})
+                    or x
+                )(entry)
             )
             # PSQL
-            psql.insert_document(entry)
+            # psql.insert_document(entry)
             if not os.getenv("DISABLE_TELEGRAM") and is_new:
                 telega.send_telegram_message(
                     os.getenv("RECEIVER"),
                     format(
-                        f'{entry["priceDetails"]["displayPrice"]}\n'
+                        f'**{entry["propertyDetails"]["propertyType"]}** {entry["priceDetails"]["displayPrice"]}\n'
                         f'https://www.domain.com.au/{entry["listingSlug"]}'
                     ),
                 )
