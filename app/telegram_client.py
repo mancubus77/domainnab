@@ -1,6 +1,11 @@
 import os
 from telethon import TelegramClient
 from telethon.sessions import MemorySession
+import logging
+
+
+logging.basicConfig(level=logging.INFO)
+logging.getLogger("telethon").setLevel(level=logging.WARNING)
 
 
 class Telegram:
