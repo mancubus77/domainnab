@@ -2,6 +2,7 @@ import os
 from telethon import TelegramClient
 from telethon.sessions import MemorySession
 import logging
+import asyncio
 
 
 logging.basicConfig(level=logging.INFO)
@@ -30,6 +31,7 @@ class Telegram:
         """
         with self.client:
             self.client.parse_mode = "md"
+            entity = self.client.loop.run_until_complete(self.client.get_entity('https://t.me/joinchat/416tud5CJApiM2I1'))
             self.client.loop.run_until_complete(
-                self.client.send_message(receiver, message)
-            )
+                self.client.send_message(receiver, message))
+            print(entity)

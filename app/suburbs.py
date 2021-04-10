@@ -4,4 +4,5 @@ suburbs = {
     "pennant hills": 2120,
     "dural": 2158,
     "baulkham hills": 2153,
+    "ryde": 2112,
 }
