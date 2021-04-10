@@ -11,7 +11,7 @@ import sys
 from mongo_client import Mongo
 from pgsql import Psql
 
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.info("Starting app...")
 HEADERS = {"X-Api-Key": os.getenv("DOMAIN_API_KEY")}
@@ -76,7 +76,11 @@ if __name__ == "__main__":
             )
             # PSQL
             # psql.insert_document(entry)
-            if not os.getenv("DISABLE_TELEGRAM") and is_new:
+            if (
+                not os.getenv("DISABLE_TELEGRAM")
+                and is_new
+                and entry["propertyType"] in ["Townhouse", "Villa", "House"]
+            ):
                 telega.send_telegram_message(
                     os.getenv("RECEIVER"),
                     format(
