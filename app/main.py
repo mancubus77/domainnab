@@ -31,16 +31,19 @@ def fetch(page):
     @return: None
     """
     request_body["pageNumber"] = page
-    response = session.post(
-        "https://api.domain.com.au/v1/listings/residential/_search", json=request_body,
-    )
-    data.extend(response.json())
-    total_pages = divmod(int(response.headers.get("x-total-count")), MAX_PER_PAGE)[0]
-    if (total_pages > 0) and (total_pages != page - 1):
-        fetch(page=page + 1)
-    logger.info(
-        f"X-Quota-PerDay-Remaining: {response.headers.get('X-Quota-PerDay-Remaining')}"
-    )
+    if len(data) < 1000:
+        response = session.post(
+            "https://api.domain.com.au/v1/listings/residential/_search", json=request_body,
+        )
+        data.extend(response.json())
+        total_pages = divmod(int(response.headers.get("x-total-count")), MAX_PER_PAGE)[0]
+        if (total_pages > 0) and (total_pages != page - 1):
+            fetch(page=page + 1)
+        logger.info(
+            f"X-Quota-PerDay-Remaining: {response.headers.get('X-Quota-PerDay-Remaining')}"
+        )
+    else:
+        logger.warning("Can not exceed 1000 requests. Quitting...")
 
 
 if __name__ == "__main__":
@@ -79,7 +82,7 @@ if __name__ == "__main__":
             if (
                 not os.getenv("DISABLE_TELEGRAM")
                 and is_new
-                and entry["propertyType"] in ["Townhouse", "Villa", "House"]
+                and entry["propertyDetails"]["propertyType"] in ["Townhouse", "Villa", "House"]
             ):
                 telega.send_telegram_message(
                     os.getenv("RECEIVER"),
