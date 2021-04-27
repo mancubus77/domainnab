@@ -5,4 +5,7 @@ suburbs = {
     "dural": 2158,
     "baulkham hills": 2153,
     "ryde": 2112,
+    "berowra heights": 2082,
+    "hornsby heights": 2077,
+    "brooklyn": 2083,
 }

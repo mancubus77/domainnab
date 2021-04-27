@@ -52,7 +52,7 @@ if __name__ == "__main__":
     session.headers.update(HEADERS)
     request_body["pageSize"] = MAX_PER_PAGE
     for k, v in suburbs.items():
-        request_body["locations"] += [
+        request_body["locations"] = [
             {
                 "state": "NSW",
                 "suburb": k,
@@ -60,34 +60,36 @@ if __name__ == "__main__":
                 "includeSurroundingSuburbs": "true",
             }
         ]
-    fetch(page=1)
-    for entry in data:
-        if entry["type"] == "PropertyListing":
-            entry = entry["listing"]
-            # Mongo
-            # mongo.insert_document(
-            #     (lambda x: x.update({"ts": int(time.time()), "_id": x["id"]}) or x)(
-            #         entry
-            #     )
-            # )
-            # Arango
-            is_new = arango.insert_document(
-                (
-                    lambda x: x.update({"ts": int(time.time()), "_key": str(x["id"])})
-                    or x
-                )(entry)
-            )
-            # PSQL
-            # psql.insert_document(entry)
-            if (
-                not os.getenv("DISABLE_TELEGRAM")
-                and is_new
-                and entry["propertyDetails"]["propertyType"] in ["Townhouse", "Villa", "House"]
-            ):
-                telega.send_telegram_message(
-                    os.getenv("RECEIVER"),
-                    format(
-                        f'**{entry["propertyDetails"]["propertyType"]}** {entry["priceDetails"]["displayPrice"]}\n'
-                        f'https://www.domain.com.au/{entry["listingSlug"]}'
-                    ),
+        logger.info(f"Processing: {k}")
+        fetch(page=1)
+        for entry in data:
+            if entry["type"] == "PropertyListing":
+                entry = entry["listing"]
+                # Mongo
+                # mongo.insert_document(
+                #     (lambda x: x.update({"ts": int(time.time()), "_id": x["id"]}) or x)(
+                #         entry
+                #     )
+                # )
+                # Arango
+                is_new = arango.insert_document(
+                    (
+                        lambda x: x.update({"ts": int(time.time()), "_key": str(x["id"])})
+                        or x
+                    )(entry)
                 )
+                # PSQL
+                # psql.insert_document(entry)
+                if (
+                    not os.getenv("DISABLE_TELEGRAM")
+                    and is_new
+                    and entry["propertyDetails"]["propertyType"] in ["Townhouse", "Villa", "House"]
+                ):
+                    telega.send_telegram_message(
+                        os.getenv("RECEIVER"),
+                        format(
+                            f'**{entry["propertyDetails"]["propertyType"]}** {entry["priceDetails"]["displayPrice"]}\n'
+                            f'https://www.domain.com.au/{entry["listingSlug"]}'
+                        ),
+                    )
+        data = []
