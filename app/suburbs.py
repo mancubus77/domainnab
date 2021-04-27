@@ -8,4 +8,5 @@ suburbs = {
     "berowra heights": 2082,
     "hornsby heights": 2077,
     "brooklyn": 2083,
+    "point clare": 2250,
 }
